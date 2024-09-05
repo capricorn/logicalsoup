@@ -1,4 +1,5 @@
 from uuid import uuid1
+import argparse
 
 from bs4 import BeautifulSoup
 import bs4
@@ -42,8 +43,11 @@ def attr_relations(node, node_id) -> uuid1:
     return attrs
 
 if __name__ == "__main__":
-    # FIXME: Take file as arg instead (who-is-hiring.html)
-    with open('tests/data/libcat-account.html') as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('html_file', help='An HTML filepath to transform into Prolog facts.')
+    args = parser.parse_args()
+
+    with open(args.html_file) as f:
         html = f.read()
     
     parser = BeautifulSoup(html, 'html.parser')
