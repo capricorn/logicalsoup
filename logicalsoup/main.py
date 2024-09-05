@@ -29,7 +29,7 @@ def attr_relations(node, node_id) -> uuid1:
         if type(val) is list:
             for i in val:
                 attrs.append(f'attr("{node_id}", {node.name}, {key}, "{i}").')
-                attrs.append(f'attr("{node_id}", {key}, "{val}").')
+                attrs.append(f'attr("{node_id}", {key}, "{i}").')
                 if node.text:
                     attrs.append(f'attr("{node_id}", {node.name}, {key}, "{i}", text("{node.text}")).')
                     attrs.append(f'attr("{node_id}", text("{node.text}")).')
