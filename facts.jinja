@@ -1,0 +1,10 @@
+:- use_module(library(solution_sequences)).
+
+descendant(DescendantId, AncestorId) :-
+    child(DescendantId, AncestorId) ;
+    (child(BetweenId, AncestorId), descendant(DescendantId, BetweenId)).
+
+
+{% for fact in facts -%}
+{{fact}}
+{% endfor %}

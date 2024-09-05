@@ -3,6 +3,7 @@ import argparse
 
 from bs4 import BeautifulSoup
 import bs4
+from jinja2 import Template
 
 def walk_tree(node, f, node_id):
     if type(node) is bs4.element.NavigableString:
@@ -53,23 +54,12 @@ if __name__ == "__main__":
     parser = BeautifulSoup(html, 'html.parser')
     node = parser.html
 
-    # TODO: Move to template?
-    print(':- use_module(library(solution_sequences)).')
-    print('titles(Title) :- attr(RecordListId,ul,class,"record-list"), attr(MediaBodyId,div,class,"media-body"), descendant(MediaBodyId,RecordListId), attr(TitleId,a,class,"title"), descendant(TitleId,MediaBodyId), attr(TitleId,text(Title)).')
+    #print('titles(Title) :- attr(RecordListId,ul,class,"record-list"), attr(MediaBodyId,div,class,"media-body"), descendant(MediaBodyId,RecordListId), attr(TitleId,a,class,"title"), descendant(TitleId,MediaBodyId), attr(TitleId,text(Title)).')
 
     s = []
     walk_tree(node, lambda n, id: s.extend(attr_relations(n, id)), uuid1())
 
-    '''
-    Procedure for finding an id that's a descendant of a given node.
-    '''
-    descendant_rule = \
-        '''
-        descendant(DescendantId, AncestorId) :-
-            child(DescendantId, AncestorId) ;
-            (child(BetweenId, AncestorId), descendant(DescendantId, BetweenId)).
-        '''
-    print(descendant_rule)
-
-    for fact in s:
-        print(fact)
+    with open('facts.jinja') as f:
+        template = Template(f.read())
+    
+    print(template.render(facts=s))
