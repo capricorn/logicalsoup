@@ -22,7 +22,7 @@ def walk_tree(node, f, node_id):
     f(node, node_id)
 
     sibling_id = None
-    for child in node.children:
+    for child in [ c for c in node.children if type(c) != bs4.element.NavigableString ]:
         child_id = uuid1()
         print(f'child("{child_id}", "{node_id}").')
         # TODO: Incorporate in template
