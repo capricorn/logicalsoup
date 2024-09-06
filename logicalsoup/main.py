@@ -20,10 +20,17 @@ def walk_tree(node, f, node_id):
         return
 
     f(node, node_id)
+
+    sibling_id = None
     for child in node.children:
         child_id = uuid1()
         print(f'child("{child_id}", "{node_id}").')
+        # TODO: Incorporate in template
+        # TODO: Only generate if node is successfully visited? (eg not on script tags)
         walk_tree(child, f, child_id)
+        if sibling_id:
+            print(f'sibling("{sibling_id}", "{child_id}").')
+        sibling_id = child_id
 
 def attr_relations(node, node_id) -> uuid1:
     attrs = []
