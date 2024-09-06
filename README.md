@@ -1,3 +1,9 @@
+# logicalsoup
+
+An experiment in parsing HTML with Prolog. This script takes an HTML file,
+parses it with beautifulsoup and prints the corresponding Prolog facts.
+See the below examples and [facts.jinja](facts.jinja) for an idea of use.
+
 ## Examples
 
 ### Extract all 'Ask HN' post titles
