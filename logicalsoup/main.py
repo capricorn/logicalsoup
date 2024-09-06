@@ -7,6 +7,8 @@ from jinja2 import Template
 
 def walk_tree(node, f, node_id):
     if type(node) is bs4.element.NavigableString:
+        # TODO: Template
+        print(f'attr("{node_id}", text("{node.string}")).')
         return
 
     # TODO: Support
@@ -25,6 +27,7 @@ def walk_tree(node, f, node_id):
 
 def attr_relations(node, node_id) -> uuid1:
     attrs = []
+    attrs.append(f'attr("{node_id}", {node.name}).')
     for key, val in node.attrs.items():
         if type(val) is list:
             for i in val:
