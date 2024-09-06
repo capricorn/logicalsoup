@@ -10,7 +10,7 @@ See the below examples and [facts.jinja](facts.jinja) for an idea of use.
 
 ```
 $ poetry run python -m logicalsoup.main tests/data/ask-hn.html > out/askhn.pl
-$ swipl askhn.pl
+$ swipl out/askhn.pl
 ```
 
 Example output:
@@ -32,7 +32,7 @@ Title = "Ask HN: Who wants to collaborate (thread) – 5 Sep 2024" .
 
 ```
 $ poetry run python -m logicalsoup.main tests/data/ask-hn.html > out/askhn.pl
-$ swipl askhn.pl
+$ swipl out/askhn.pl
 ```
 
 Example output:
