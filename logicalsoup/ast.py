@@ -5,9 +5,9 @@ def generate_prolog_ast(root_node):
     return generate_prolog_ast_rec(root_node)# + '.'
 
 def generate_prolog_ast_rec(root_node):
-    children_asts = [ f'element("{child.name}", [{generate_prolog_ast_rec(child)}])' for child in root_node.children if type(child) is Tag ]
+    children_asts = [ f'element(\'{child.name}\', [{generate_prolog_ast_rec(child)}])' for child in root_node.children if type(child) is Tag ]
     children_asts_str = f'[{', '.join(children_asts)}]'
-    return f'element("{root_node.name}", {children_asts_str})'
+    return f'element(\'{root_node.name}\', {children_asts_str})'
 
 def build_logicalsoup_predicates():
     match_predicate = \
@@ -42,6 +42,36 @@ def build_logicalsoup_predicates():
         % Example of applying a rule via call -- make a 'helloVisit' declaration that is wrapped with this
         rewrite(Rule, Expr, NewExpr) :-
             call(Rule, Expr, NewExpr).
+
+        % Need to specify what the possibilities are
+        % TODO: Generate this from document? Other options?
+        % (Obviously can declare as facts, etc)
+        tag(Tag) :-
+            Tag = 'div' 
+            ; Tag = 'span'
+            ; Tag = '[document]'
+            ; Tag = 'td'
+            ; Tag = 'tr'
+            ; Tag = 'center'.
+
+        % HTML AST
+        element(Tag, []) :-
+            tag(Tag).
+        element(Tag, [Child|Siblings]) :-
+            tag(Tag),
+            Child = element(ChildTag, ChildChildren),
+            element(ChildTag, ChildChildren),
+            element(Tag, Siblings).
+
+        formatElement([], '').
+        formatElement([E|Es], Output) :-
+            formatElement(E, EOut),
+            formatElement(Es, EsOut),
+            format(atom(Output), '~a~a', [EOut, EsOut]).
+        formatElement(Element, Output) :-
+            Element = element(Tag, Children),
+            formatElement(Children, ChildOut),
+            format(atom(Output), '<~a>~a</~a>', [Tag, ChildOut, Tag]).
         '''
     
     return '\n'.join([match_predicate]) 
