@@ -30,6 +30,9 @@ def build_logicalsoup_predicates():
         visit(Rewriter, Expr, ResultExpr) :-
             (rewrite(Rewriter, Expr, NewExpr), visit(Rewriter, NewExpr, ResultExpr), !)
             ; (Expr = element(Tag, Children), visit(Rewriter, Children, ChildrenExpr), ResultExpr = element(Tag, ChildrenExpr)).
+
+        visitAST(Rewriter, ResultExpr) :-
+            visit(Rewriter, {prolog_ast}, ResultExpr).
     
         % Provide a dynamic predicate such as:
         customRewrite(Expr, NewExpr) :-
