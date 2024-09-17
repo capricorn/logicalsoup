@@ -20,6 +20,23 @@ visit(Rewriter, Expr, ResultExpr) :-
 visitAST(Rewriter, ResultExpr) :-
     visit(Rewriter, {{prolog_ast}}, ResultExpr).
 
+
+linkRewriteAttrs([], []).
+linkRewriteAttrs([Attr|Attrs], NewAttrs) :-
+    Attr = attr(Key,Value),
+    % TODO: Allow any dynamic predicate?
+    (Key = "href",!,
+        linkRewriteAttrs(Attrs, SiblingAttrs),
+        append([attr("href", "https://google.com")], SiblingAttrs, NewAttrs))
+    ; (linkRewriteAttrs(Attrs, SiblingAttrs),
+        append([Attr],SiblingAttrs,NewAttrs)).
+
+linkArchiveRewrite(Expr, NewExpr) :-
+    Expr = element(a,Attrs,Children),
+    linkRewriteAttrs(Attrs,NewAttrs),
+    % TODO: Infinite recursion since the same node is visited (and matched on) again.
+    NewExpr = element(a,NewAttrs,Children).
+
 % Provide a dynamic predicate such as:
 % TODO: Fix to work with new element AST definition
 customRewrite(Expr, NewExpr) :-
