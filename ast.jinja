@@ -26,9 +26,12 @@ linkRewriteAttrs([], []).
 linkRewriteAttrs([Attr|Attrs], NewAttrs) :-
     Attr = attr(Key,Value),
     % TODO: Allow any dynamic predicate?
+    % TODO: Handle relative links
     (Key = "href",!,
         linkRewriteAttrs(Attrs, SiblingAttrs),
-        append([attr("href", "https://google.com")], SiblingAttrs, NewAttrs))
+        ((sub_string(Value, 0, _, _, "https://"), !, SiteURL = Value) ; string_concat("https://news.ycombinator.com/", Value, SiteURL)),
+        string_concat("https://web.archive.org/web/",SiteURL,NewURL),
+        append([attr("href", NewURL)], SiblingAttrs, NewAttrs))
     ; (linkRewriteAttrs(Attrs, SiblingAttrs),
         append([Attr],SiblingAttrs,NewAttrs)).
 
