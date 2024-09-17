@@ -8,10 +8,22 @@ from logicalsoup.tags import tags
 def generate_prolog_ast(root_node):
     return generate_prolog_ast_rec(root_node)# + '.'
 
+def generate_attributes(node):
+    attrs = []
+    for key,value in node.attrs.items():
+        if type(value) is list:
+            for val in value:
+                attrs.append((key,val))
+        else:
+            attrs.append((key,value))
+    
+    attrs_str = ', '.join([f'attr("{key}", "{val}")' for key,val in attrs ])
+    return f'[{attrs_str}]'
+
 def generate_prolog_ast_rec(root_node):
-    children_asts = [ f'element(\'{child.name}\', [], [{generate_prolog_ast_rec(child)}])' for child in root_node.children if type(child) is Tag ]
+    children_asts = [ f'element(\'{child.name}\', {generate_attributes(child)}, [{generate_prolog_ast_rec(child)}])' for child in root_node.children if type(child) is Tag ]
     children_asts_str = f'[{', '.join(children_asts)}]'
-    return f'element(\'{root_node.name}\', [], {children_asts_str})'
+    return f'element(\'{root_node.name}\', {generate_attributes(root_node)}, {children_asts_str})'
 
 def build_logicalsoup_predicates(prolog_ast, tags):
     with open('ast.jinja') as f:

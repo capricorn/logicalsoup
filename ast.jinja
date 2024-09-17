@@ -5,7 +5,7 @@ match(Node, Expr) :-
     Node = Expr
     ; (Node = element(_, Children), match(Children, Expr)).
 match(Expr) :-
-    match({prolog_ast}, Expr).
+    match({{prolog_ast}}, Expr).
 
 visit(Rewriter, [], ResultExpr) :-
     ResultExpr = [].
@@ -15,16 +15,16 @@ visit(Rewriter, [Child|Siblings], ResultExpr) :-
     append([ChildExpr], [SiblingExpr], ResultExpr).
 visit(Rewriter, Expr, ResultExpr) :-
     (rewrite(Rewriter, Expr, NewExpr), visit(Rewriter, NewExpr, ResultExpr), !)
-    ; (Expr = element(Tag, Children), visit(Rewriter, Children, ChildrenExpr), ResultExpr = element(Tag, ChildrenExpr)).
+    ; (Expr = element(Tag,Attrs,Children), visit(Rewriter, Children, ChildrenExpr), ResultExpr = element(Tag,Attrs,ChildrenExpr)).
 
 visitAST(Rewriter, ResultExpr) :-
-    visit(Rewriter, {prolog_ast}, ResultExpr).
+    visit(Rewriter, {{prolog_ast}}, ResultExpr).
 
 % Provide a dynamic predicate such as:
 % TODO: Fix to work with new element AST definition
 customRewrite(Expr, NewExpr) :-
-    Expr = element(div, Children),
-    NewExpr = element(p, Children).
+    Expr = element(div,Attrs,Children),
+    NewExpr = element(p,Attrs,Children).
 
 % Example of applying a rule via call -- make a 'helloVisit' declaration that is wrapped with this
 rewrite(Rule, Expr, NewExpr) :-
