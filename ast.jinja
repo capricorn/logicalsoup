@@ -21,6 +21,7 @@ visitAST(Rewriter, ResultExpr) :-
     visit(Rewriter, {prolog_ast}, ResultExpr).
 
 % Provide a dynamic predicate such as:
+% TODO: Fix to work with new element AST definition
 customRewrite(Expr, NewExpr) :-
     Expr = element(div, Children),
     NewExpr = element(p, Children).
@@ -40,20 +41,33 @@ tag(Tag) :-
     ; Tag = '{{tags[-1]}}'.
 
 % HTML AST
-element(Tag, []) :-
-    tag(Tag).
-element(Tag, [Child|Siblings]) :-
-    tag(Tag),
-    Child = element(ChildTag, ChildChildren),
-    element(ChildTag, ChildChildren),
-    element(Tag, Siblings).
+attr(Key, Value) :-
+    string(Key), string(Value).
+attrs([]).
+attrs([Attr|Tail]) :-
+    Attr = attr(_, _),
+    attrs(Tail).
 
-formatElement([], '').
-formatElement([E|Es], Output) :-
-    formatElement(E, EOut),
-    formatElement(Es, EsOut),
-    format(atom(Output), '~a~a', [EOut, EsOut]).
-formatElement(Element, Output) :-
-    Element = element(Tag, Children),
-    formatElement(Children, ChildOut),
-    format(atom(Output), '<~a>~a</~a>', [Tag, ChildOut, Tag]).
+childElement([]).
+childElement([Child|Siblings]) :-
+    Child = element(Tag,Attrs,Children),
+    tag(Tag),
+    attrs(Attrs),
+    childElement(Children),
+    childElement(Siblings).
+
+element(Tag,Attrs,Children) :-
+    tag(Tag),
+    attrs(Attrs),
+    childElement(Children).
+
+% TODO: Correct to work with new element AST definition 
+%formatElement([], '').
+%formatElement([E|Es], Output) :-
+%    formatElement(E, EOut),
+%    formatElement(Es, EsOut),
+%    format(atom(Output), '~a~a', [EOut, EsOut]).
+%formatElement(Element, Output) :-
+%    Element = element(Tag, Children),
+%    formatElement(Children, ChildOut),
+%    format(atom(Output), '<~a>~a</~a>', [Tag, ChildOut, Tag]).

@@ -9,9 +9,9 @@ def generate_prolog_ast(root_node):
     return generate_prolog_ast_rec(root_node)# + '.'
 
 def generate_prolog_ast_rec(root_node):
-    children_asts = [ f'element(\'{child.name}\', [{generate_prolog_ast_rec(child)}])' for child in root_node.children if type(child) is Tag ]
+    children_asts = [ f'element(\'{child.name}\', [], [{generate_prolog_ast_rec(child)}])' for child in root_node.children if type(child) is Tag ]
     children_asts_str = f'[{', '.join(children_asts)}]'
-    return f'element(\'{root_node.name}\', {children_asts_str})'
+    return f'element(\'{root_node.name}\', [], {children_asts_str})'
 
 def build_logicalsoup_predicates(prolog_ast, tags):
     with open('ast.jinja') as f:
