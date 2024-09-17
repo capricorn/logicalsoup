@@ -3,6 +3,8 @@ import argparse
 from bs4 import BeautifulSoup, Tag
 from jinja2 import Template
 
+from logicalsoup.tags import tags
+
 def generate_prolog_ast(root_node):
     return generate_prolog_ast_rec(root_node)# + '.'
 
@@ -11,11 +13,11 @@ def generate_prolog_ast_rec(root_node):
     children_asts_str = f'[{', '.join(children_asts)}]'
     return f'element(\'{root_node.name}\', {children_asts_str})'
 
-def build_logicalsoup_predicates(prolog_ast):
+def build_logicalsoup_predicates(prolog_ast, tags):
     with open('ast.jinja') as f:
         template = Template(f.read())
     
-    return template.render(prolog_ast=prolog_ast)
+    return template.render(prolog_ast=prolog_ast, tags=tags)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -27,4 +29,4 @@ if __name__ == '__main__':
     
     soup = BeautifulSoup(html, 'html.parser')
     prolog_ast = generate_prolog_ast(soup)
-    print(build_logicalsoup_predicates(prolog_ast=prolog_ast))
+    print(build_logicalsoup_predicates(prolog_ast=prolog_ast, tags=tags))
