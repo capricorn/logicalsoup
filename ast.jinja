@@ -14,7 +14,8 @@ visit(Rewriter, [Child|Siblings], ResultExpr) :-
     visit(Rewriter, Siblings, SiblingExpr),
     append([ChildExpr], [SiblingExpr], ResultExpr).
 visit(Rewriter, Expr, ResultExpr) :-
-    (rewrite(Rewriter, Expr, NewExpr), visit(Rewriter, NewExpr, ResultExpr), !)
+    % After rewriting a node visit its children (but _not_ the same node again.) 
+    (rewrite(Rewriter, Expr, NewExpr), NewExpr = element(Tag,Attrs,NewChildren), visit(Rewriter, NewChildren, NewChildExpr), ResultExpr = element(Tag,Attrs,NewChildExpr), !)
     ; (Expr = element(Tag,Attrs,Children), visit(Rewriter, Children, ChildrenExpr), ResultExpr = element(Tag,Attrs,ChildrenExpr)).
 
 visitAST(Rewriter, ResultExpr) :-
