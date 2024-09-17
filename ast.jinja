@@ -82,13 +82,20 @@ element(Tag,Attrs,Children) :-
     attrs(Attrs),
     childElement(Children).
 
-% TODO: Correct to work with new element AST definition 
-%formatElement([], '').
-%formatElement([E|Es], Output) :-
-%    formatElement(E, EOut),
-%    formatElement(Es, EsOut),
-%    format(atom(Output), '~a~a', [EOut, EsOut]).
-%formatElement(Element, Output) :-
-%    Element = element(Tag, Children),
-%    formatElement(Children, ChildOut),
-%    format(atom(Output), '<~a>~a</~a>', [Tag, ChildOut, Tag]).
+% TODO: Correct to handle multiple keys (eg: multiple class keys should be combined as `class="foo bar baz"`)
+formatAttributes([], '').
+formatAttributes([Attr|Attrs], Output) :-
+    Attr = attr(Key, Value),
+    formatAttributes(Attrs, SiblingOutput),
+    format(atom(Output), '~a="~a" ~a', [Key, Value, SiblingOutput]).
+
+formatElement([], '').
+formatElement([E|Es], Output) :-
+    formatElement(E, EOut),
+    formatElement(Es, EsOut),
+    format(atom(Output), '~a~a', [EOut, EsOut]).
+formatElement(Element, Output) :-
+    Element = element(Tag, Attrs, Children),
+    formatAttributes(Attrs, AttrStr),
+    formatElement(Children, ChildOut),
+    format(atom(Output), '<~a ~a>~a</~a>', [Tag, AttrStr, ChildOut, Tag]).
