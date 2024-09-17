@@ -33,12 +33,11 @@ rewrite(Rule, Expr, NewExpr) :-
 % TODO: Generate this from document? Other options?
 % (Obviously can declare as facts, etc)
 tag(Tag) :-
-    Tag = 'div' 
-    ; Tag = 'span'
-    ; Tag = '[document]'
-    ; Tag = 'td'
-    ; Tag = 'tr'
-    ; Tag = 'center'.
+    Tag = '{{tags[0]}}'
+    {%- for tag in tags[1:-1] %}
+    ; Tag = '{{tag}}'
+    {%- endfor %}
+    ; Tag = '{{tags[-1]}}'.
 
 % HTML AST
 element(Tag, []) :-
